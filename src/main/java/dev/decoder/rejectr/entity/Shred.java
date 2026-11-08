@@ -3,6 +3,7 @@ package dev.decoder.rejectr.entity;
 import dev.decoder.rejectr.shred.Outcome;
 import dev.decoder.rejectr.shred.Reason;
 import dev.decoder.rejectr.shred.Stage;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,7 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +32,13 @@ public class Shred {
 
     @Enumerated(EnumType.STRING)
     private Outcome outcome;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "device_id")
+    private UUID deviceId;
 
     public UUID getId() {
         return id;
@@ -60,5 +70,21 @@ public class Shred {
 
     public void setOutcome(Outcome outcome) {
         this.outcome = outcome;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public UUID getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(UUID deviceId) {
+        this.deviceId = deviceId;
     }
 }
