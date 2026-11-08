@@ -1,0 +1,12 @@
+package dev.decoder.rejectr.shred;
+
+public enum Stage {
+    APPLIED_NEVER_HEARD_BACK,
+    RECRUITER_CHAT,
+    SCREENING_CALL,
+    TAKE_HOME_OR_ASSESSMENT,
+    FIRST_INTERVIEW,
+    LATER_ROUNDS_OR_PANEL,
+    FINAL_ROUND,
+    AFTER_AN_OFFER
+}
