@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateStoryRequestValidationTest {
@@ -71,5 +72,45 @@ class CreateStoryRequestValidationTest {
 
         assertEquals(1, result.size());
         assertEquals("story must be at most 2000 characters", result.iterator().next().getMessage());
+    }
+
+    @Test
+    void rejectsPlainEmail() {
+        Set<ConstraintViolation<CreateStoryRequest>> result =
+                violations("reach me at jane.doe@example.com please");
+
+        assertEquals(1, result.size());
+        assertEquals("remove email addresses and phone numbers before sharing",
+                result.iterator().next().getMessage());
+    }
+
+    @Test
+    void rejectsBracketedEmail() {
+        assertFalse(violations("jane [at] example [dot] com").isEmpty());
+    }
+
+    @Test
+    void rejectsZeroWidthEmail() {
+        assertFalse(violations("jane@exa\u200Bmple.com").isEmpty());
+    }
+
+    @Test
+    void rejectsUkPhone() {
+        assertFalse(violations("call me on 07700 900123").isEmpty());
+    }
+
+    @Test
+    void rejectsInternationalPhone() {
+        assertFalse(violations("call me on +44 7700 900123").isEmpty());
+    }
+
+    @Test
+    void acceptsSentenceWithBareAt() {
+        assertTrue(violations("I was at home. Not sure what went wrong.").isEmpty());
+    }
+
+    @Test
+    void acceptsYearsAndRoundCounts() {
+        assertTrue(violations("Applied in 2026 after 3 rounds.").isEmpty());
     }
 }
