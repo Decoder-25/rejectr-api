@@ -13,7 +13,6 @@ public record ShredResponse(
         Stage stage,
         Outcome outcome,
         Reason reason,
-        UUID deviceId,
         Instant createdAt
 ) {
     public static ShredResponse from(Shred shred) {
@@ -22,7 +21,6 @@ public record ShredResponse(
                 shred.getStage(),
                 shred.getOutcome(),
                 shred.getReason(),
-                shred.getDeviceId(),
                 shred.getCreatedAt()
         );
     }

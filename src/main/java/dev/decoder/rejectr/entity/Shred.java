@@ -37,8 +37,8 @@ public class Shred {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "device_id")
-    private UUID deviceId;
+    @Column(name = "device_hash")
+    private String deviceHash;
 
     public UUID getId() {
         return id;
@@ -80,11 +80,11 @@ public class Shred {
         this.createdAt = createdAt;
     }
 
-    public UUID getDeviceId() {
-        return deviceId;
+    public String getDeviceHash() {
+        return deviceHash;
     }
 
-    public void setDeviceId(UUID deviceId) {
-        this.deviceId = deviceId;
+    public void setDeviceHash(String deviceHash) {
+        this.deviceHash = deviceHash;
     }
 }

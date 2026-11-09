@@ -30,4 +30,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Malformed request body", Map.of()));
     }
+
+    @ExceptionHandler(InvalidDeviceTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDeviceToken(InvalidDeviceTokenException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), Map.of()));
+    }
 }
