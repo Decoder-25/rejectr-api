@@ -38,9 +38,10 @@ The app runs at http://localhost:8080 and applies Flyway migrations on startup.
 
 ## Endpoints
 
-| Method | Path      | Description                                             |
-|--------|-----------|---------------------------------------------------------|
-| POST   | `/shreds` | Create a shred (category only; text is never persisted) |
+| Method | Path            | Description                                                   |
+|--------|-----------------|---------------------------------------------------------------|
+| POST   | `/shreds`       | Create a shred (category only; text is never persisted)       |
+| GET    | `/stats/weekly` | Shred counts per outcome over the last 7 days, plus the total |
 
 ### Example
 
@@ -61,3 +62,26 @@ consistent body:
 ```json
 {"status":400,"message":"Validation failed","errors":{"stage":"stage is required"}}
 ```
+
+### Weekly stats
+
+```bash
+curl http://localhost:8080/stats/weekly
+```
+
+```json
+{
+  "total": 5,
+  "byOutcome": {
+    "GHOSTED": 3,
+    "AUTOMATED_EMAIL": 1,
+    "PERSONAL_EMAIL_OR_CALL": 0,
+    "POSITION_CLOSED": 1,
+    "ON_HOLD": 0,
+    "OFFER_WITHDRAWN": 0
+  }
+}
+```
+
+The query uses a hand-written native SQL `GROUP BY` over `created_at >= now() - INTERVAL '7 days'`,
+backed by the `idx_shreds_created_at` index.
