@@ -41,6 +41,7 @@ The app runs at http://localhost:8080 and applies Flyway migrations on startup.
 | Method | Path            | Description                                                   |
 |--------|-----------------|---------------------------------------------------------------|
 | POST   | `/shreds`       | Create a shred (category only; text is never persisted)       |
+| POST   | `/stories`      | Publish a scrubbed story to the wall (public)                 |
 | GET    | `/stats/weekly` | Shred counts per outcome over the last 7 days, plus the total |
 
 ### Example
@@ -62,6 +63,20 @@ consistent body:
 ```json
 {"status":400,"message":"Validation failed","errors":{"stage":"stage is required"}}
 ```
+
+### Publish a story
+
+Only called when the user explicitly chooses to share. The text must be scrubbed;
+emails and phone numbers are rejected.
+
+```bash
+curl -i -X POST http://localhost:8080/stories \
+  -H 'Content-Type: application/json' \
+  -H 'X-Device-Token: 3f2c1a9b4d6e8f0a1b2c3d4e5f6a7b8c' \
+  -d '{"stage":"FINAL_ROUND","outcome":"GHOSTED","body":"Five rounds over two months, then silence."}'
+```
+
+Returns `201 Created` with `Location: /stories/{id}` and the story (status `PUBLISHED`).
 
 ### Weekly stats
 

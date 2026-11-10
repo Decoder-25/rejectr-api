@@ -5,6 +5,7 @@ import dev.decoder.rejectr.entity.Shred;
 import dev.decoder.rejectr.exception.InvalidDeviceTokenException;
 import dev.decoder.rejectr.repository.ShredRepository;
 import dev.decoder.rejectr.security.DeviceTokenHasher;
+import dev.decoder.rejectr.security.DeviceTokenService;
 import dev.decoder.rejectr.service.ShredService;
 import dev.decoder.rejectr.shred.Outcome;
 import dev.decoder.rejectr.shred.Stage;
@@ -31,11 +32,12 @@ class ShredServiceTest {
     private ShredRepository repository;
 
     private final DeviceTokenHasher hasher = new DeviceTokenHasher("test-secret");
+    private final DeviceTokenService deviceTokenService = new DeviceTokenService(hasher);
     private ShredService service;
 
     @BeforeEach
     void setUp() {
-        service = new ShredService(repository, hasher);
+        service = new ShredService(repository, deviceTokenService);
     }
 
     @Test

@@ -1,6 +1,8 @@
 package dev.decoder.rejectr;
 
 import dev.decoder.rejectr.dto.CreateStoryRequest;
+import dev.decoder.rejectr.shred.Outcome;
+import dev.decoder.rejectr.shred.Stage;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -32,7 +34,25 @@ class CreateStoryRequestValidationTest {
     }
 
     private Set<ConstraintViolation<CreateStoryRequest>> violations(String body) {
-        return validator.validate(new CreateStoryRequest(body));
+        return validator.validate(new CreateStoryRequest(Stage.FINAL_ROUND, Outcome.GHOSTED, body));
+    }
+
+    @Test
+    void rejectsMissingStage() {
+        Set<ConstraintViolation<CreateStoryRequest>> result =
+                validator.validate(new CreateStoryRequest(null, Outcome.GHOSTED, "A story."));
+
+        assertEquals(1, result.size());
+        assertEquals("stage is required", result.iterator().next().getMessage());
+    }
+
+    @Test
+    void rejectsMissingOutcome() {
+        Set<ConstraintViolation<CreateStoryRequest>> result =
+                validator.validate(new CreateStoryRequest(Stage.FINAL_ROUND, null, "A story."));
+
+        assertEquals(1, result.size());
+        assertEquals("outcome is required", result.iterator().next().getMessage());
     }
 
     @Test
