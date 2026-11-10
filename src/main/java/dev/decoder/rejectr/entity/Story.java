@@ -44,6 +44,9 @@ public class Story {
     @Column(name = "device_hash", length = 64)
     private String deviceHash;
 
+    @Column(name = "delete_token_hash", length = 64)
+    private String deleteTokenHash;
+
     public UUID getId() {
         return id;
     }
@@ -98,5 +101,13 @@ public class Story {
 
     public void setDeviceHash(String deviceHash) {
         this.deviceHash = deviceHash;
+    }
+
+    public String getDeleteTokenHash() {
+        return deleteTokenHash;
+    }
+
+    public void setDeleteTokenHash(String deleteTokenHash) {
+        this.deleteTokenHash = deleteTokenHash;
     }
 }

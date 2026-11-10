@@ -4,6 +4,7 @@ import dev.decoder.rejectr.dto.CreateStoryRequest;
 import dev.decoder.rejectr.entity.Story;
 import dev.decoder.rejectr.exception.InvalidDeviceTokenException;
 import dev.decoder.rejectr.repository.StoryRepository;
+import dev.decoder.rejectr.security.DeleteTokenService;
 import dev.decoder.rejectr.security.DeviceTokenHasher;
 import dev.decoder.rejectr.security.DeviceTokenService;
 import dev.decoder.rejectr.service.StoryService;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -35,11 +37,12 @@ class StoryServiceTest {
 
     private final DeviceTokenHasher hasher = new DeviceTokenHasher("test-secret");
     private final DeviceTokenService deviceTokenService = new DeviceTokenService(hasher);
+    private final DeleteTokenService deleteTokenService = new DeleteTokenService();
     private StoryService service;
 
     @BeforeEach
     void setUp() {
-        service = new StoryService(repository, deviceTokenService);
+        service = new StoryService(repository, deviceTokenService, deleteTokenService);
     }
 
     @Test
@@ -55,6 +58,17 @@ class StoryServiceTest {
         assertNotNull(story.getDeviceHash());
         assertEquals(hasher.hash(TOKEN), story.getDeviceHash());
         assertNotEquals(TOKEN, story.getDeviceHash());
+    }
+
+    @Test
+    void storesHashedDeleteToken() {
+        when(repository.save(any(Story.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Story story = service.create(request(), TOKEN);
+
+        assertNotNull(story.getDeleteTokenHash());
+        assertEquals(64, story.getDeleteTokenHash().length());
+        assertTrue(story.getDeleteTokenHash().matches("[0-9a-f]{64}"));
     }
 
     @Test
