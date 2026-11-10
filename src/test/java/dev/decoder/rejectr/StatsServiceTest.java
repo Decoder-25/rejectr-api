@@ -1,6 +1,6 @@
 package dev.decoder.rejectr;
 
-import dev.decoder.rejectr.dto.WeeklyStatsResponse;
+import dev.decoder.rejectr.dto.OutcomeCount;
 import dev.decoder.rejectr.repository.ShredRepository;
 import dev.decoder.rejectr.service.StatsService;
 import dev.decoder.rejectr.shred.Outcome;
@@ -29,23 +29,31 @@ class StatsServiceTest {
     }
 
     @Test
-    void zeroFillsEveryOutcomeAndSumsTotal() {
+    void returnsEveryOutcomeZeroFilledInEnumOrder() {
         when(repository.countByOutcomeLast7Days()).thenReturn(List.of(
                 row(Outcome.GHOSTED, 4),
                 row(Outcome.AUTOMATED_EMAIL, 2)
         ));
 
-        WeeklyStatsResponse response = service.weekly();
+        List<OutcomeCount> counts = service.weekly();
 
-        assertEquals(Outcome.values().length, response.byOutcome().size());
-        assertEquals(4, response.byOutcome().get(Outcome.GHOSTED));
-        assertEquals(2, response.byOutcome().get(Outcome.AUTOMATED_EMAIL));
-        assertEquals(0, response.byOutcome().get(Outcome.ON_HOLD));
-        assertEquals(6, response.total());
+        assertEquals(Outcome.values().length, counts.size());
+        assertEquals(Outcome.GHOSTED, counts.get(0).type());
+        assertEquals(4, counts.get(0).count());
+        assertEquals(2, countOf(counts, Outcome.AUTOMATED_EMAIL));
+        assertEquals(0, countOf(counts, Outcome.ON_HOLD));
     }
 
-    private static ShredRepository.OutcomeCount row(Outcome outcome, long total) {
-        return new ShredRepository.OutcomeCount() {
+    private static long countOf(List<OutcomeCount> counts, Outcome outcome) {
+        return counts.stream()
+                .filter(count -> count.type() == outcome)
+                .findFirst()
+                .orElseThrow()
+                .count();
+    }
+
+    private static ShredRepository.OutcomeCountProjection row(Outcome outcome, long total) {
+        return new ShredRepository.OutcomeCountProjection() {
             @Override
             public String getOutcome() {
                 return outcome.name();

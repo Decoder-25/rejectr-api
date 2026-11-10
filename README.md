@@ -70,17 +70,14 @@ curl http://localhost:8080/stats/weekly
 ```
 
 ```json
-{
-  "total": 5,
-  "byOutcome": {
-    "GHOSTED": 3,
-    "AUTOMATED_EMAIL": 1,
-    "PERSONAL_EMAIL_OR_CALL": 0,
-    "POSITION_CLOSED": 1,
-    "ON_HOLD": 0,
-    "OFFER_WITHDRAWN": 0
-  }
-}
+[
+  { "type": "GHOSTED", "count": 3 },
+  { "type": "AUTOMATED_EMAIL", "count": 1 },
+  { "type": "PERSONAL_EMAIL_OR_CALL", "count": 0 },
+  { "type": "POSITION_CLOSED", "count": 1 },
+  { "type": "ON_HOLD", "count": 0 },
+  { "type": "OFFER_WITHDRAWN", "count": 0 }
+]
 ```
 
 The query uses a hand-written native SQL `GROUP BY` over `created_at >= now() - INTERVAL '7 days'`,

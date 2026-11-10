@@ -64,7 +64,7 @@ class WeeklyStatsRepositoryTest {
 
     private Map<String, Long> counts() {
         Map<String, Long> counts = new HashMap<>();
-        for (ShredRepository.OutcomeCount row : repository.countByOutcomeLast7Days()) {
+        for (ShredRepository.OutcomeCountProjection row : repository.countByOutcomeLast7Days()) {
             counts.put(row.getOutcome(), row.getTotal());
         }
         return counts;

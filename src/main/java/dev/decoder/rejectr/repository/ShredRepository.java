@@ -15,9 +15,9 @@ public interface ShredRepository extends JpaRepository<Shred, UUID> {
             WHERE created_at >= now() - INTERVAL '7 days'
             GROUP BY outcome
             """, nativeQuery = true)
-    List<OutcomeCount> countByOutcomeLast7Days();
+    List<OutcomeCountProjection> countByOutcomeLast7Days();
 
-    interface OutcomeCount {
+    interface OutcomeCountProjection {
         String getOutcome();
 
         long getTotal();
