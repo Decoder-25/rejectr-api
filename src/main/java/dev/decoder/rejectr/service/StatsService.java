@@ -3,6 +3,7 @@ package dev.decoder.rejectr.service;
 import dev.decoder.rejectr.dto.OutcomeCount;
 import dev.decoder.rejectr.repository.ShredRepository;
 import dev.decoder.rejectr.shred.Outcome;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class StatsService {
         this.repository = repository;
     }
 
+    @Cacheable(cacheNames = "weeklyStats", key = "'weekly'")
     @Transactional(readOnly = true)
     public List<OutcomeCount> weekly() {
         Map<Outcome, Long> counts = new LinkedHashMap<>();
